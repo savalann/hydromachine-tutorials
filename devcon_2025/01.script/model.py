@@ -29,11 +29,11 @@ class CustomBiLSTM(nn.Module):
         )
 
 
-        # Bidirectional LSTM Layer
-        self.lstm = nn.LSTM(input_size, hidden_size, num_layers, batch_first=True, bidirectional=True)
+        # LSTM Layer
+        self.lstm = nn.LSTM(input_size, hidden_size, num_layers, batch_first=True, bidirectional=False)
         
         # Fully connected layer
-        self.fc = nn.Linear(hidden_size * 2, output_size)  # Output size is doubled for bidirectional LSTM
+        self.fc = nn.Linear(hidden_size, output_size)  # Output size is doubled for bidirectional LSTM
 
         self.num_layers = num_layers
         self.hidden_size = hidden_size
@@ -57,8 +57,8 @@ class CustomBiLSTM(nn.Module):
             x = torch.cat([x_dynamic, x_static_emb], dim=-1)  # [batch, seq_len, input_size + static_embedding_dim]
 
         # Initialize hidden state and cell state for both directions
-        h0 = torch.zeros(self.num_layers * 2, x.size(0), self.hidden_size).to(self.device)  # 2 for bidirection
-        c0 = torch.zeros(self.num_layers * 2, x.size(0), self.hidden_size).to(self.device)  # 2 for bidirection
+        h0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size).to(self.device)  # 2 for bidirection
+        c0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size).to(self.device)  # 2 for bidirection
 
         # Forward propagate LSTM
         # print(x.shape)
